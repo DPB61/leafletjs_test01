@@ -1,0 +1,64 @@
+<!-- 
+To Do
+=====
+Each object to show name at all times on a fixed label.
+-->
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>
+			Test 01
+		</title>
+		<!-- Leaflet -->
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+		integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+		crossorigin=""/>
+		<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
+		integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
+		crossorigin=""></script>
+		<script src="test01.geojson"></script>
+		
+		<style type="text/css">
+			#map { height : 850px; }
+		</style>
+	</head>
+	
+	<body>
+		<h2>Test 01</h2>
+		<div id="map"></div>
+		
+		<script>
+			var osmLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+			var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',osmAttrib = '&copy; ' + osmLink + 'Contributors';
+			var osmMap = L.tileLayer(osmUrl, {attribution: osmAttrib});
+	
+			var map = L.map('map', {
+				layers: [osmMap] // only add one!
+			});
+	
+			var baseLayers = {
+				"OpenStreetMap": osmMap
+			};
+	
+			// This shows correct geoJSON name but shows fixed label only for 1 (first) geoJSON object!
+			function fixedLabel(layer) {
+				return layer.feature.properties.name
+			};
+	
+	function clickLabel (feature,layer) {
+		layer.bindPopup("ID: " + feature.properties.id + "<br>Name: " + feature.properties.name + "<br>DateTime: " + feature.properties.vdatetime + "<br>Speed: " + feature.properties.speedknots + " knots<br>CMG: " + feature.properties.cmg + "°");
+	};
+	
+	var vesselsLayer = L.geoJson(vessels,{
+		onEachFeature: clickLabel
+	})
+	.addTo(map).bindTooltip(fixedLabel, {permanent: true, direction: 'right'}).openTooltip();
+	
+	map.fitBounds(vesselsLayer.getBounds());
+			
+		</script>
+	</body>
+</html>
